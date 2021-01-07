@@ -39,7 +39,8 @@ void cmdHelp()
     Serial.println("help\tRetrieve a list of commands and their functions.");
     Serial.println("tx dBm\tSet transmitter dBm. Valid values are from +2 to +20.");
     Serial.println("freq MHz\tSet transmitter frequency in Mhz. Valid values are from 137.0 to 1020.0.");
-    Serial.println("send message\tTransmit message through LoRa module.") return;
+    Serial.println("send message\tTransmit message through LoRa module.");
+    return;
 }
 
 void cmdTx(RH_RF95 &rf95, String serialData)
