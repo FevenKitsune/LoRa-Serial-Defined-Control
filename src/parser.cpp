@@ -1,17 +1,20 @@
 #include "parser.h"
 
+// Command directives
 #define CMD_HELP "help"
 #define CMD_TX "tx"
 #define CMD_FREQ "freq"
 #define CMD_SEND "send"
+
+// Data buffers
 #define BUFFER_SIZE 64
 char conversionBuffer[BUFFER_SIZE];
 uint8_t sendBuffer[BUFFER_SIZE];
 
 void parseCommand(RH_RF95 &rf95, String serialData)
 {
-
-    //
+    // Determine the command root and call the appropriate function.
+    // There's probably a cleaner way to do this but I am not a C++ programmer.
     if (serialData.substring(0, String(CMD_HELP).length()) == CMD_HELP)
     {
         cmdHelp();
@@ -32,12 +35,11 @@ void parseCommand(RH_RF95 &rf95, String serialData)
 
 void cmdHelp()
 {
-    Serial.println("LoRa SDCS || Written by William Stewart");
+    Serial.println("LoRa SDCS || Written by Will S.");
     Serial.println("help\tRetrieve a list of commands and their functions.");
     Serial.println("tx dBm\tSet transmitter dBm. Valid values are from +2 to +20.");
     Serial.println("freq MHz\tSet transmitter frequency in Mhz. Valid values are from 137.0 to 1020.0.");
-    Serial.println("send message\tTransmit message through LoRa module.")
-    return;
+    Serial.println("send message\tTransmit message through LoRa module.") return;
 }
 
 void cmdTx(RH_RF95 &rf95, String serialData)
@@ -96,10 +98,12 @@ void cmdFreq(RH_RF95 &rf95, String serialData)
 
 void cmdSend(RH_RF95 &rf95, String serialData)
 {
-    serialData.remove(0, String(CMD_SEND).length() + 1); // Consolidate passed argument by removing command.
-    serialData.toCharArray(conversionBuffer, BUFFER_SIZE);
+    serialData.remove(0, String(CMD_SEND).length() + 1);   // Consolidate passed argument by removing command.
+    serialData.toCharArray(conversionBuffer, BUFFER_SIZE); // Convert string to a char array.
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
+        // Iterate through the conversionBuffer and cast each char to uint8_t.
+        // uint8_t is the datatype expected by the RadioHead library.
         sendBuffer[i] = uint8_t(conversionBuffer[i]);
     }
     if (!serialData.length())
@@ -111,8 +115,9 @@ void cmdSend(RH_RF95 &rf95, String serialData)
     else
     {
         // Valid frequency has been detected.
-        rf95.send(sendBuffer, sizeof(sendBuffer));
-        Serial.println("TX> " + serialData);
+        rf95.send(sendBuffer, sizeof(sendBuffer)); // Send the converted buffer
+        Serial.println("TX> " + serialData);       // Echo the sent data back to serial
+        rf95.waitPacketSent();                     // Wait for transmission to finish before returning.
         return;
     }
 }
