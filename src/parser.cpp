@@ -21,14 +21,17 @@ void parseCommand(RH_RF95 &rf95, String serialData)
     }
     else if (serialData.substring(0, String(CMD_TX).length()) == CMD_TX)
     {
+        serialData.remove(0, String(CMD_TX).length() + 1); // Consolidate passed argument by removing command.
         cmdTx(rf95, serialData);
     }
     else if (serialData.substring(0, String(CMD_FREQ).length()) == CMD_FREQ)
     {
+        serialData.remove(0, String(CMD_FREQ).length() + 1); // Consolidate passed argument by removing command.
         cmdFreq(rf95, serialData);
     }
     else if (serialData.substring(0, String(CMD_SEND).length()) == CMD_SEND)
     {
+        serialData.remove(0, String(CMD_SEND).length() + 1); // Consolidate passed argument by removing command.
         cmdSend(rf95, serialData);
     }
 }
@@ -46,9 +49,7 @@ void cmdHelp()
 void cmdTx(RH_RF95 &rf95, String serialData)
 {
     int txLevel;
-
-    serialData.remove(0, String(CMD_TX).length() + 1); // Consolidate passed argument by removing command.
-    txLevel = serialData.toInt();                      // Convert argument to integer. Defaults to 0 if string cannot be converted.
+    txLevel = serialData.toInt(); // Convert argument to integer. Defaults to 0 if string cannot be converted.
     if (!serialData.length())
     {
         // ERROR: No arguments have been given.
@@ -73,9 +74,7 @@ void cmdTx(RH_RF95 &rf95, String serialData)
 void cmdFreq(RH_RF95 &rf95, String serialData)
 {
     float freq;
-
-    serialData.remove(0, String(CMD_FREQ).length() + 1); // Consolidate passed argument by removing command.
-    freq = serialData.toFloat();                         // Convert argument to float. Defaults to 0 if string cannot be converted.
+    freq = serialData.toFloat(); // Convert argument to float. Defaults to 0 if string cannot be converted.
     if (!serialData.length())
     {
         // ERROR: No arguments have been given.
@@ -99,7 +98,6 @@ void cmdFreq(RH_RF95 &rf95, String serialData)
 
 void cmdSend(RH_RF95 &rf95, String serialData)
 {
-    serialData.remove(0, String(CMD_SEND).length() + 1);   // Consolidate passed argument by removing command.
     serialData.toCharArray(conversionBuffer, BUFFER_SIZE); // Convert string to a char array.
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
