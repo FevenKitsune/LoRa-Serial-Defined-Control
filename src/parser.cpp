@@ -6,6 +6,7 @@
 #define CMD_FREQ "freq"
 #define CMD_SEND "send"
 #define CMD_BW "bw"
+#define CMD_SF "sf"
 
 // Data buffers
 #define BUFFER_SIZE 64
@@ -44,6 +45,10 @@ void ParseCommand(RH_RF95 &rf95, String &serial_data)
     {
         CommandBW(rf95, arg);
     }
+    else if (command == CMD_SF)
+    {
+        CommandSF(rf95, arg);
+    }
 }
 
 String PopArgument(String &data)
@@ -59,10 +64,11 @@ void CommandHelp()
 {
     Serial.println("LoRa SDCS\tWritten by Will S.");
     Serial.println("help\tRetrieve a list of commands and their functions.");
-    Serial.println("tx dBm\tSet transmitter dBm. Valid values are from +2 to +20.");
-    Serial.println("freq MHz\tSet transmitter frequency in MHz. Valid values are from 137.0 to 1020.0.");
+    Serial.println("tx dBm\tSet transmitter dBm. Valid range: +2 dBm to +20 dBm.");
+    Serial.println("freq MHz\tSet transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
     Serial.println("send message\tTransmit message through LoRa module.");
     Serial.println("bw Hz\tSet transmitter bandwidth in Hz.");
+    Serial.println("sf n\tSet transmitter spreading factor. Valid range: 6 to 12.");
     return;
 }
 
@@ -72,13 +78,13 @@ void CommandTX(RH_RF95 &rf95, String &arg)
     if (!arg.length())
     {
         // ERROR: No arguments have been given.
-        Serial.println("Please specify a power output level in dBm. (+2 to +20)");
+        Serial.println("Please specify a power output level in dBm. Valid range: +2 dBm to +20 dBm.");
         return;
     }
     else if (tx_level < 2 || tx_level > 20)
     {
         // ERROR: Invalid output level has been given.
-        Serial.println("Power output level is invalid! Please try again.");
+        Serial.println("Power output level is invalid! Valid range: +2 dBm to +20 dBm.");
         return;
     }
     else
@@ -96,13 +102,13 @@ void CommandFrequency(RH_RF95 &rf95, String &arg)
     if (!arg.length())
     {
         // ERROR: No arguments have been given.
-        Serial.println("Please specify a frequency in MHz. (137.0 MHz to 1020.0 MHz)");
+        Serial.println("Please specify a frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
         return;
     }
     else if (freq < 137.0 || freq > 1020.0)
     {
-        // ERROR: Invalid output level has been given.
-        Serial.println("Frequency is invalid! Please try again.");
+        // ERROR: Invalid frequency has been given.
+        Serial.println("Frequency is invalid! Valid range: 137.0 MHz to 1020.0 MHz.");
         return;
     }
     else
@@ -133,7 +139,7 @@ void CommandSend(RH_RF95 &rf95, String &arg)
     }
     else
     {
-        // Valid frequency has been detected.
+        // Valid message has been detected.
         rf95.send(send_buffer, sizeof(send_buffer)); // Send the converted buffer
         Serial.println("TX> " + arg);                // Echo the sent data back to serial
         rf95.waitPacketSent();                       // Wait for transmission to finish before returning.
@@ -144,6 +150,41 @@ void CommandSend(RH_RF95 &rf95, String &arg)
 void CommandBW(RH_RF95 &rf95, String &arg)
 {
     long bw = arg.toInt();
-    Serial.println("NOT IMPLEMENTED");
-    return;
+    if (!arg.length())
+    {
+        // ERROR: No arguments have been given.
+        Serial.println("Please specify bandwidth in Hz.");
+        return;
+    }
+    else
+    {
+        // Valid bandwidth has been detected.
+        rf95.setSignalBandwidth(bw);
+        Serial.println("Bandwidth (Hz): " + String(bw) + "Hz");
+        return;
+    }
+}
+
+void commandSF(RH_RF95 &rf95, String &arg)
+{
+    uint8_t sf = arg.toInt();
+    if (!arg.length())
+    {
+        // ERROR: No arguments have been given.
+        Serial.println("Please specify a Spreading Factor. Valid range: 6 to 12.");
+        return;
+    }
+    else if (sf < 6 || sf > 12)
+    {
+        // ERROR: Invalid spreading factor has been given.
+        Serial.println("Spreading Factor is invalid! Valid range: 6 to 12.");
+        return;
+    }
+    else
+    {
+        // Valid spreading factor has been detected.
+        rf95.setSpreadingFactor(sf);
+        Serial.println("Spreading Factor: " + String(sf));
+        return;
+    }
 }
