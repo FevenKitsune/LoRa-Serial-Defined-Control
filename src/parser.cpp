@@ -285,7 +285,7 @@ void CommandCfg(RH_RF95 &rf95)
     if (!has_loaded)
     {
         Serial.println("Configuration hasn't been loaded since last power cycle. Current settings cannot be determined.");
-        Serial.println("Run the load command to ensure current settings correspond to known configuration.");
+        Serial.println("Run the \"load\" command to ensure current settings correspond to known configuration.");
     }
     else
     {

@@ -27,12 +27,12 @@ void setup()
   Serial.println("LoRa Serial Defined Control Software (SDCS)\tWritten by Will S.");
   Serial.println("===============================================================");
   Serial.println("Default values after initialization:");
-  Serial.println("Frequency           434.0 Mhz");
-  Serial.println("Power Output Level  13 dBm");
-  Serial.println("Bandwidth           125 KHz");
-  Serial.println("Coding Rate         4/5");
-  Serial.println("Spreading Factor    128chips/symbol (7)");
-  Serial.println("CRC Error Checking  On");
+  Serial.println("Frequency          = 434.0 Mhz");
+  Serial.println("Power Output Level = 13 dBm");
+  Serial.println("Bandwidth          = 125 KHz");
+  Serial.println("Coding Rate        = 4/5");
+  Serial.println("Spreading Factor   = 128chips/symbol (7)");
+  Serial.println("CRC Error Checking = On");
   Serial.println("Please say a command. Use \"help\" for a list of commands.");
 }
 
