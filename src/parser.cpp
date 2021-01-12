@@ -10,6 +10,7 @@
 #define CMD_LOAD "load"
 #define CMD_RESET "reset"
 #define CMD_CFG "cfg"
+#define CMD_GET "get"
 
 // Data buffers
 #define BUFFER_SIZE 64
@@ -70,6 +71,10 @@ void ParseCommand(RH_RF95 &rf95, String &serial_data)
     else if (command == CMD_CFG)
     {
         CommandCfg(rf95);
+    }
+    else if (command == CMD_GET)
+    {
+        CommandGet(rf95, arg);
     }
 }
 
