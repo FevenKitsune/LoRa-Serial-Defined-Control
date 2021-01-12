@@ -9,48 +9,48 @@
 // Data buffers
 #define BUFFER_SIZE 64
 
-void parseCommand(RH_RF95 &rf95, String &serialData)
+void ParseCommand(RH_RF95 &rf95, String &serial_data)
 {
-    String command = popArg(serialData);
-    String arg = popArg(serialData);
+    String command = PopArgument(serial_data);
+    String arg = PopArgument(serial_data);
 
     /*
     Serial.println("DEBUG:");
     Serial.println("command=" + command);
     Serial.println("arg=" + arg);
-    Serial.println("serialData=" + serialData);
+    Serial.println("serial_data=" + serial_data);
     */
 
     // Determine the command root and call the appropriate function.
     // There's probably a cleaner way to do this but I am not a C++ programmer.
     if (command == CMD_HELP)
     {
-        cmdHelp();
+        CommandHelp();
     }
     else if (command == CMD_TX)
     {
-        cmdTx(rf95, arg);
+        CommandTX(rf95, arg);
     }
     else if (command == CMD_FREQ)
     {
-        cmdFreq(rf95, arg);
+        CommandFrequency(rf95, arg);
     }
     else if (command == CMD_SEND)
     {
-        cmdSend(rf95, arg);
+        CommandSend(rf95, arg);
     }
 }
 
-String popArg(String &data)
+String PopArgument(String &data)
 {
-    String toReturn = data.substring(0, data.indexOf(' '));
+    String to_return = data.substring(0, data.indexOf(' '));
     data.remove(0, data.indexOf(' ') + 1 ? data.indexOf(' ') + 1 : data.length());
     // Clears string up to next space. data.indexOf(' ') will return -1 if no space is found.
     // Therefore, data.indexOf(' ') + 1 == 0 or False
-    return toReturn;
+    return to_return;
 }
 
-void cmdHelp()
+void CommandHelp()
 {
     Serial.println("LoRa SDCS\tWritten by Will S.");
     Serial.println("help\tRetrieve a list of commands and their functions.");
@@ -85,10 +85,9 @@ void cmdTx(RH_RF95 &rf95, String &arg)
     }
 }
 
-void cmdFreq(RH_RF95 &rf95, String &arg)
+void CommandFrequency(RH_RF95 &rf95, String &arg)
 {
-    float freq;
-    freq = arg.toFloat(); // Convert argument to float. Defaults to 0 if string cannot be converted.
+    float freq = arg.toFloat(); // Convert argument to float. Defaults to 0 if string cannot be converted.
     if (!arg.length())
     {
         // ERROR: No arguments have been given.
@@ -110,16 +109,16 @@ void cmdFreq(RH_RF95 &rf95, String &arg)
     }
 }
 
-void cmdSend(RH_RF95 &rf95, String &arg)
+void CommandSend(RH_RF95 &rf95, String &arg)
 {
-    char conversionBuffer[BUFFER_SIZE];
-    uint8_t sendBuffer[BUFFER_SIZE];
-    arg.toCharArray(conversionBuffer, BUFFER_SIZE); // Convert string to a char array.
+    char conversion_buffer[BUFFER_SIZE];
+    uint8_t send_buffer[BUFFER_SIZE];
+    arg.toCharArray(conversion_buffer, BUFFER_SIZE); // Convert string to a char array.
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
-        // Iterate through the conversionBuffer and cast each char to uint8_t.
+        // Iterate through the conversion_buffer and cast each char to uint8_t.
         // uint8_t is the datatype expected by the RadioHead library.
-        sendBuffer[i] = uint8_t(conversionBuffer[i]);
+        send_buffer[i] = uint8_t(conversion_buffer[i]);
     }
     if (!arg.length())
     {
@@ -130,7 +129,7 @@ void cmdSend(RH_RF95 &rf95, String &arg)
     else
     {
         // Valid frequency has been detected.
-        rf95.send(sendBuffer, sizeof(sendBuffer)); // Send the converted buffer
+        rf95.send(send_buffer, sizeof(send_buffer)); // Send the converted buffer
         Serial.println("TX> " + arg);       // Echo the sent data back to serial
         rf95.waitPacketSent();                     // Wait for transmission to finish before returning.
         return;

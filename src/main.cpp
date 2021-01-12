@@ -8,7 +8,7 @@
 RH_RF95 rf95(8, 3); // Adafruit Feather M0 with RFM95
 
 // Serial data
-String serialData;
+String serial_data;
 
 void setup()
 {
@@ -33,8 +33,8 @@ void loop()
   // Do nothing unless serial is available
   if (Serial.available())
   {
-    serialData = Serial.readString(); // Read input string
-    Serial.println("$ " + serialData); // Echo input back to user
-    parseCommand(rf95, serialData); // Pass string to command parsing program
+    serial_data = Serial.readString(); // Read input string
+    Serial.println("$ " + serial_data); // Echo input back to user
+    ParseCommand(rf95, serial_data); // Pass string to command parsing program
   }
 }
