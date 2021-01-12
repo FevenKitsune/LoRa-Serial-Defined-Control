@@ -5,6 +5,7 @@
 #define CMD_TX "tx"
 #define CMD_FREQ "freq"
 #define CMD_SEND "send"
+#define CMD_BW "bw"
 
 // Data buffers
 #define BUFFER_SIZE 64
@@ -39,6 +40,10 @@ void ParseCommand(RH_RF95 &rf95, String &serial_data)
     {
         CommandSend(rf95, arg);
     }
+    else if (command == CMD_BW)
+    {
+        CommandBW(rf95, arg);
+    }
 }
 
 String PopArgument(String &data)
@@ -55,15 +60,15 @@ void CommandHelp()
     Serial.println("LoRa SDCS\tWritten by Will S.");
     Serial.println("help\tRetrieve a list of commands and their functions.");
     Serial.println("tx dBm\tSet transmitter dBm. Valid values are from +2 to +20.");
-    Serial.println("freq MHz\tSet transmitter frequency in Mhz. Valid values are from 137.0 to 1020.0.");
+    Serial.println("freq MHz\tSet transmitter frequency in MHz. Valid values are from 137.0 to 1020.0.");
     Serial.println("send message\tTransmit message through LoRa module.");
+    Serial.println("bw Hz\tSet transmitter bandwidth in Hz.");
     return;
 }
 
 void CommandTX(RH_RF95 &rf95, String &arg)
 {
-    int tx_level;
-    tx_level = arg.toInt(); // Convert argument to integer. Defaults to 0 if string cannot be converted.
+    int tx_level = arg.toInt(); // Convert argument to integer. Defaults to 0 if string cannot be converted.
     if (!arg.length())
     {
         // ERROR: No arguments have been given.
@@ -130,8 +135,15 @@ void CommandSend(RH_RF95 &rf95, String &arg)
     {
         // Valid frequency has been detected.
         rf95.send(send_buffer, sizeof(send_buffer)); // Send the converted buffer
-        Serial.println("TX> " + arg);       // Echo the sent data back to serial
-        rf95.waitPacketSent();                     // Wait for transmission to finish before returning.
+        Serial.println("TX> " + arg);                // Echo the sent data back to serial
+        rf95.waitPacketSent();                       // Wait for transmission to finish before returning.
         return;
     }
+}
+
+void CommandBW(RH_RF95 &rf95, String &arg)
+{
+    long bw = arg.toInt();
+    Serial.println("NOT IMPLEMENTED");
+    return;
 }
