@@ -200,6 +200,7 @@ void CommandGet(RH_RF95 &rf95, String &arg)
     }
     else
     {
+        Serial.println("Waiting " + String(timeout) + " ms to recieve a message. Please wait...");
         if (rf95.waitAvailableTimeout(timeout))
         {
             if (rf95.recv(buf, &len))
