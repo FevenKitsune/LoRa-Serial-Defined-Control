@@ -60,17 +60,17 @@ void CommandHelp()
     return;
 }
 
-void cmdTx(RH_RF95 &rf95, String &arg)
+void CommandTX(RH_RF95 &rf95, String &arg)
 {
-    int txLevel;
-    txLevel = arg.toInt(); // Convert argument to integer. Defaults to 0 if string cannot be converted.
+    int tx_level;
+    tx_level = arg.toInt(); // Convert argument to integer. Defaults to 0 if string cannot be converted.
     if (!arg.length())
     {
         // ERROR: No arguments have been given.
         Serial.println("Please specify a power output level in dBm. (+2 to +20)");
         return;
     }
-    else if (txLevel < 2 || txLevel > 20)
+    else if (tx_level < 2 || tx_level > 20)
     {
         // ERROR: Invalid output level has been given.
         Serial.println("Power output level is invalid! Please try again.");
@@ -79,8 +79,8 @@ void cmdTx(RH_RF95 &rf95, String &arg)
     else
     {
         // Valid output level has been detected.
-        rf95.setTxPower(txLevel, false);
-        Serial.println("Power output level: " + String(txLevel) + "dBm");
+        rf95.setTxPower(tx_level, false);
+        Serial.println("Power output level: " + String(tx_level) + "dBm");
         return;
     }
 }
