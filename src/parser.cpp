@@ -90,6 +90,7 @@ void CommandHelp()
     Serial.println("tx [dBm]        Set transmitter dBm. Valid range: +2 dBm to +20 dBm.");
     Serial.println("freq [MHz]      Set transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
     Serial.println("send [message]  Transmit message through LoRa module.");
+    Serial.println("get [timeout]   Recieve a message. Timeout given in ms. Valid range: 1 ms to 30000 ms.");
     Serial.println("bw [Hz]         Set transmitter bandwidth in Hz.");
     Serial.println("sf [n]          Set transmitter spreading factor. Valid range: 6 to 12.");
     Serial.println("load            Retrieves the last assigned values for each command and applies them.");
@@ -173,6 +174,48 @@ void CommandSend(RH_RF95 &rf95, String &arg)
         rf95.waitPacketSent();                       // Wait for transmission to finish before returning.
         return;
     }
+}
+
+void CommandGet(RH_RF95 &rf95, String &arg)
+{
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(buf);
+    long timeout = arg.toInt();
+    if (!arg.length())
+    {
+        // ERROR: No arguments have been given.
+        Serial.println("Please specify timeout in ms. Valid range: 1 ms to 30000 ms.");
+        return;
+    }
+    else if (timeout < 1 || timeout > 30000)
+    {
+        // ERROR: Invalid timeout has been given.
+        Serial.println("Timeout is invalid! Valid range: 1 ms to 30000 ms.");
+        return;
+    }
+    else
+    {
+        if (rf95.waitAvailableTimeout(timeout))
+        {
+            if (rf95.recv(buf, &len))
+            {
+                Serial.print("RX> ");
+                Serial.println((char*)buf);
+                Serial.print("RSSI = ");
+                Serial.println(rf95.lastRssi(), DEC);
+            }
+            else
+            {
+                Serial.println("RX failed! Unable to recieve message.");
+            }
+        }
+        else
+        {
+            Serial.println("Timeout has been reached. No message recieved.");
+        }
+        
+    }
+    
 }
 
 void CommandBW(RH_RF95 &rf95, String &arg)
