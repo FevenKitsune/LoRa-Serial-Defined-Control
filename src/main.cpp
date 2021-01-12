@@ -24,7 +24,7 @@ void setup()
   {
     Serial.println("RF95 LoRa Module failed to initialize!");
   }
-  Serial.println("Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on");
+  Serial.println("Defaults after init are:\nFrequency = 434.0 MHz\nPower output level = 13 dBm\nBw = 125 kHz\nCr = 4/5\nSf = 128chips/symbol (7)\nCRC on");
   Serial.println("Please say a command. Use \"help\" for a list of commands.");
 }
 

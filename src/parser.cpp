@@ -7,9 +7,19 @@
 #define CMD_SEND "send"
 #define CMD_BW "bw"
 #define CMD_SF "sf"
+#define CMD_LOAD "load"
+#define CMD_RESET "reset"
+#define CMD_CFG "cfg"
 
 // Data buffers
 #define BUFFER_SIZE 64
+
+// Flash Storage objects
+bool has_loaded = false;
+FlashStorage(tx_storage, int);
+FlashStorage(freq_storage, float);
+FlashStorage(bw_storage, long);
+FlashStorage(sf_storage, uint8_t);
 
 void ParseCommand(RH_RF95 &rf95, String &serial_data)
 {
@@ -49,6 +59,18 @@ void ParseCommand(RH_RF95 &rf95, String &serial_data)
     {
         CommandSF(rf95, arg);
     }
+    else if (command == CMD_LOAD)
+    {
+        CommandLoad(rf95);
+    }
+    else if (command == CMD_RESET)
+    {
+        CommandReset(rf95);
+    }
+    else if (command == CMD_CFG)
+    {
+        CommandCfg(rf95);
+    }
 }
 
 String PopArgument(String &data)
@@ -64,11 +86,13 @@ void CommandHelp()
 {
     Serial.println("LoRa SDCS\tWritten by Will S.");
     Serial.println("help\tRetrieve a list of commands and their functions.");
-    Serial.println("tx dBm\tSet transmitter dBm. Valid range: +2 dBm to +20 dBm.");
-    Serial.println("freq MHz\tSet transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
-    Serial.println("send message\tTransmit message through LoRa module.");
-    Serial.println("bw Hz\tSet transmitter bandwidth in Hz.");
-    Serial.println("sf n\tSet transmitter spreading factor. Valid range: 6 to 12.");
+    Serial.println("tx [dBm]\tSet transmitter dBm. Valid range: +2 dBm to +20 dBm.");
+    Serial.println("freq [MHz]\tSet transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
+    Serial.println("send [message]\tTransmit message through LoRa module.");
+    Serial.println("bw [Hz]\tSet transmitter bandwidth in Hz.");
+    Serial.println("sf [n]\tSet transmitter spreading factor. Valid range: 6 to 12.");
+    Serial.println("load\tRetrieves the last assigned values for each command and applies them.");
+    Serial.println("reset\tWipes load retrieval storage. Values are assigned when their respective command is called.");
     return;
 }
 
@@ -91,7 +115,8 @@ void CommandTX(RH_RF95 &rf95, String &arg)
     {
         // Valid output level has been detected.
         rf95.setTxPower(tx_level, false);
-        Serial.println("Power output level: " + String(tx_level) + "dBm");
+        tx_storage.write(tx_level);
+        Serial.println("Power output level: " + String(tx_level) + " dBm");
         return;
     }
 }
@@ -115,7 +140,8 @@ void CommandFrequency(RH_RF95 &rf95, String &arg)
     {
         // Valid frequency has been detected.
         rf95.setFrequency(freq);
-        Serial.println("Frequency (MHz): " + String(freq) + "MHz");
+        freq_storage.write(freq);
+        Serial.println("Frequency (MHz): " + String(freq) + " MHz");
         return;
     }
 }
@@ -160,7 +186,8 @@ void CommandBW(RH_RF95 &rf95, String &arg)
     {
         // Valid bandwidth has been detected.
         rf95.setSignalBandwidth(bw);
-        Serial.println("Bandwidth (Hz): " + String(bw) + "Hz");
+        bw_storage.write(bw);
+        Serial.println("Bandwidth (Hz): " + String(bw) + " Hz");
         return;
     }
 }
@@ -184,7 +211,126 @@ void CommandSF(RH_RF95 &rf95, String &arg)
     {
         // Valid spreading factor has been detected.
         rf95.setSpreadingFactor(sf);
+        sf_storage.write(sf);
         Serial.println("Spreading Factor: " + String(sf));
         return;
+    }
+}
+
+void CommandLoad(RH_RF95 &rf95)
+{
+    int recovered_tx = tx_storage.read();
+    float recovered_freq = freq_storage.read();
+    long recovered_bw = bw_storage.read();
+    uint8_t recovered_sf = sf_storage.read();
+    has_loaded = true;
+
+    // Check recovered power output level and update.
+    if (recovered_tx == 0)
+    {
+        Serial.println("Power output level not saved, ignoring.");
+    }
+    else
+    {
+        rf95.setTxPower(recovered_tx);
+        Serial.println("Recovered power output level: " + String(recovered_tx) + " dBm");
+    }
+
+    // Check recovered frequency value and update.
+    if (recovered_freq == 0.0)
+    {
+        Serial.println("Frequency not saved, ignoring.");
+    }
+    else
+    {
+        rf95.setFrequency(recovered_freq);
+        Serial.println("Recovered frequency: " + String(recovered_freq) + " MHz");
+    }
+
+    // Check recovered bandwidth value and update
+    if (recovered_bw == 0)
+    {
+        Serial.println("Bandwidth not saved, ignoring.");
+    }
+    else
+    {
+        rf95.setTxPower(recovered_bw);
+        Serial.println("Recovered bandwidth: " + String(recovered_bw) + " Hz");
+    }
+
+    // Check recovered spreading factor value and update
+    if (recovered_sf == 0)
+    {
+        Serial.println("Spreading factor not saved, ignoring.");
+    }
+    else
+    {
+        rf95.setTxPower(recovered_sf);
+        Serial.println("Recovered spreading factor: " + String(recovered_sf) + " dBm");
+    }
+}
+
+void CommandReset(RH_RF95 &rf95)
+{
+    tx_storage.write(0);
+    freq_storage.write(0.0);
+    bw_storage.write(0);
+    sf_storage.write(0);
+    Serial.println("System configuration reset! Default values will be loaded on next startup.");
+}
+
+void CommandCfg(RH_RF95 &rf95)
+{
+    if (!has_loaded)
+    {
+        Serial.println("Configuration hasn't been loaded since last power cycle. Current settings cannot be determined.");
+        Serial.println("Run the load command to ensure current settings correspond to known configuration.");
+    }
+    else
+    {
+        int recovered_tx = tx_storage.read();
+        float recovered_freq = freq_storage.read();
+        long recovered_bw = bw_storage.read();
+        uint8_t recovered_sf = sf_storage.read();
+
+        // Check recovered power output level and print.
+        if (recovered_tx == 0)
+        {
+            Serial.println("Power output level not saved, assume default value of 13 dBm.");
+        }
+        else
+        {
+            Serial.println("Current power output level: " + String(recovered_tx) + " dBm");
+        }
+
+        // Check recovered frequency value and print.
+        if (recovered_freq == 0.0)
+        {
+            Serial.println("Frequency not saved, assume default value of 434.0 Mhz.");
+        }
+        else
+        {
+            Serial.println("Recovered frequency: " + String(recovered_freq) + " MHz");
+        }
+
+        // Check recovered bandwidth value and print
+        if (recovered_bw == 0)
+        {
+            Serial.println("Bandwidth not saved, assume default value of 125000 Hz.");
+        }
+        else
+        {
+            Serial.println("Recovered bandwidth: " + String(recovered_bw) + " Hz");
+        }
+
+        // Check recovered spreading factor value and print
+        if (recovered_sf == 0)
+        {
+            Serial.println("Spreading factor not saved, assume default value of 7.");
+        }
+        else
+        {
+            Serial.println("Recovered spreading factor: " + String(recovered_sf));
+        }
     }
 }
