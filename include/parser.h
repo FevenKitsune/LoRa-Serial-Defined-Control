@@ -9,6 +9,6 @@ void CommandTX(RH_RF95 &rf95, String &arg);
 void CommandFrequency(RH_RF95 &rf95, String &arg);
 void CommandSend(RH_RF95 &rf95, String &arg);
 void CommandBW(RH_RF95 &rf95, String &arg);
-void commandSF(RH_RF95 &rf95, String &arg);
+void CommandSF(RH_RF95 &rf95, String &arg);
 
 #endif

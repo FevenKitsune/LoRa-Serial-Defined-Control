@@ -165,7 +165,7 @@ void CommandBW(RH_RF95 &rf95, String &arg)
     }
 }
 
-void commandSF(RH_RF95 &rf95, String &arg)
+void CommandSF(RH_RF95 &rf95, String &arg)
 {
     uint8_t sf = arg.toInt();
     if (!arg.length())
