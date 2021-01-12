@@ -84,7 +84,8 @@ String PopArgument(String &data)
 
 void CommandHelp()
 {
-    Serial.println("LoRa SDCS\tWritten by Will S.");
+    Serial.println("LoRa Serial Defined Control Software (SDCS)\tWritten by Will S.");
+    Serial.println("===============================================================");
     Serial.println("help\tRetrieve a list of commands and their functions.");
     Serial.println("tx [dBm]\tSet transmitter dBm. Valid range: +2 dBm to +20 dBm.");
     Serial.println("freq [MHz]\tSet transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
