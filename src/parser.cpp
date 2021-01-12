@@ -94,6 +94,7 @@ void CommandHelp()
     Serial.println("sf [n]          Set transmitter spreading factor. Valid range: 6 to 12.");
     Serial.println("load            Retrieves the last assigned values for each command and applies them.");
     Serial.println("reset           Wipes load retrieval storage. Values are assigned when their respective command is called.");
+    Serial.println("cfg             Prints load retrieval storage. Must have loaded since last power cycle.");
     return;
 }
 
