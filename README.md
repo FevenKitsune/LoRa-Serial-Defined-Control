@@ -8,10 +8,10 @@ I've found that [Termite](https://www.compuphase.com/software_termite.htm) works
 
 Settings:
 
-| Setting          | Value     |                    |
-|------------------|-----------|--------------------|
-| Baud rate        | 9600      |                    |
-| Flow control     | RTS/CTS   |                    |
-| Transmitted Text | Append LF | Local echo = False |
+| Setting          | Value          |                    |
+|------------------|----------------|--------------------|
+| Baud rate        | 9600           |                    |
+| Flow control     | RTS/CTS        |                    |
+| Transmitted Text | Append Nothing | Local echo = False |
 
 Close port when inactive is very useful when flashing multiple versions one after another.

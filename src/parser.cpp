@@ -11,8 +11,12 @@
 char conversionBuffer[BUFFER_SIZE];
 uint8_t sendBuffer[BUFFER_SIZE];
 
-void parseCommand(RH_RF95 &rf95, String serialData)
+void parseCommand(RH_RF95 &rf95, String &serialData)
 {
+    String command = popArg(serialData);
+    Serial.println("DEBUG:");
+    Serial.println(command);
+    Serial.println(serialData);
     // Determine the command root and call the appropriate function.
     // There's probably a cleaner way to do this but I am not a C++ programmer.
     if (serialData.substring(0, String(CMD_HELP).length()) == CMD_HELP)
@@ -36,6 +40,13 @@ void parseCommand(RH_RF95 &rf95, String serialData)
     }
 }
 
+String popArg(String &data)
+{
+    String toReturn = data.substring(0, data.indexOf(' '));
+    data.remove(0, data.indexOf(' ') + 1);
+    return toReturn;
+}
+
 void cmdHelp()
 {
     Serial.println("LoRa SDCS\tWritten by Will S.");
@@ -46,7 +57,7 @@ void cmdHelp()
     return;
 }
 
-void cmdTx(RH_RF95 &rf95, String serialData)
+void cmdTx(RH_RF95 &rf95, String &serialData)
 {
     int txLevel;
     txLevel = serialData.toInt(); // Convert argument to integer. Defaults to 0 if string cannot be converted.
@@ -71,7 +82,7 @@ void cmdTx(RH_RF95 &rf95, String serialData)
     }
 }
 
-void cmdFreq(RH_RF95 &rf95, String serialData)
+void cmdFreq(RH_RF95 &rf95, String &serialData)
 {
     float freq;
     freq = serialData.toFloat(); // Convert argument to float. Defaults to 0 if string cannot be converted.
@@ -96,7 +107,7 @@ void cmdFreq(RH_RF95 &rf95, String serialData)
     }
 }
 
-void cmdSend(RH_RF95 &rf95, String serialData)
+void cmdSend(RH_RF95 &rf95, String &serialData)
 {
     serialData.toCharArray(conversionBuffer, BUFFER_SIZE); // Convert string to a char array.
     for (int i = 0; i < BUFFER_SIZE; i++)
