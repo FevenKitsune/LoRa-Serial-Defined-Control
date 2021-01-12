@@ -34,7 +34,7 @@ void loop()
   if (Serial.available())
   {
     serialData = Serial.readString(); // Read input string
-    Serial.print("$ " + serialData); // Echo input back to user
+    Serial.println("$ " + serialData); // Echo input back to user
     parseCommand(rf95, serialData); // Pass string to command parsing program
   }
 }
