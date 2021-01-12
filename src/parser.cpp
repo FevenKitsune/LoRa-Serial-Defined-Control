@@ -86,14 +86,14 @@ void CommandHelp()
 {
     Serial.println("LoRa Serial Defined Control Software (SDCS)\tWritten by Will S.");
     Serial.println("===============================================================");
-    Serial.println("help\tRetrieve a list of commands and their functions.");
-    Serial.println("tx [dBm]\tSet transmitter dBm. Valid range: +2 dBm to +20 dBm.");
-    Serial.println("freq [MHz]\tSet transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
-    Serial.println("send [message]\tTransmit message through LoRa module.");
-    Serial.println("bw [Hz]\tSet transmitter bandwidth in Hz.");
-    Serial.println("sf [n]\tSet transmitter spreading factor. Valid range: 6 to 12.");
-    Serial.println("load\tRetrieves the last assigned values for each command and applies them.");
-    Serial.println("reset\tWipes load retrieval storage. Values are assigned when their respective command is called.");
+    Serial.println("help            Retrieve a list of commands and their functions.");
+    Serial.println("tx [dBm]        Set transmitter dBm. Valid range: +2 dBm to +20 dBm.");
+    Serial.println("freq [MHz]      Set transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
+    Serial.println("send [message]  Transmit message through LoRa module.");
+    Serial.println("bw [Hz]         Set transmitter bandwidth in Hz.");
+    Serial.println("sf [n]          Set transmitter spreading factor. Valid range: 6 to 12.");
+    Serial.println("load            Retrieves the last assigned values for each command and applies them.");
+    Serial.println("reset           Wipes load retrieval storage. Values are assigned when their respective command is called.");
     return;
 }
 
