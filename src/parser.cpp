@@ -50,7 +50,7 @@ void ParseCommand(RH_RF95 &rf95, String &serial_data)
     }
     else if (command == CMD_SEND)
     {
-        CommandSend(rf95, arg);
+        CommandSend(rf95, arg + " " + serial_data);
     }
     else if (command == CMD_BW)
     {
