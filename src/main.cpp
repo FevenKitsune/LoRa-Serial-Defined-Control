@@ -24,6 +24,7 @@ void setup()
   {
     Serial.println("RF95 LoRa Module failed to initialize!");
   }
+  rf95.setModemConfig(rf95.Bw125Cr45Sf128);
   Serial.println("LoRa Serial Defined Control Software (SDCS)\tWritten by Will S.");
   Serial.println("===============================================================");
   Serial.println("Default values after initialization:");

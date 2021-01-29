@@ -93,7 +93,7 @@ void CommandHelp()
     Serial.println("===============================================================");
     Serial.println("help            Retrieve a list of commands and their functions.");
     Serial.println("tx [dBm]        Set transmitter dBm. Valid range: +2 dBm to +20 dBm.");
-    Serial.println("freq [MHz]      Set transmitter frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
+    Serial.println("freq [MHz]      Set transmitter frequency in MHz. Valid ranges: 137 MHz - 175 MHz, 410 MHz - 525 MHz, 862 MHz - 1020 MHz.");
     Serial.println("send [message]  Transmit message through LoRa module.");
     Serial.println("get [timeout]   Recieve a message. Timeout given in ms. Valid range: 1 ms to 30000 ms.");
     Serial.println("bw [Hz]         Set transmitter bandwidth in Hz.");
@@ -135,13 +135,13 @@ void CommandFrequency(RH_RF95 &rf95, String &arg)
     if (!arg.length())
     {
         // ERROR: No arguments have been given.
-        Serial.println("Please specify a frequency in MHz. Valid range: 137.0 MHz to 1020.0 MHz.");
+        Serial.println("Please specify a frequency in MHz. Valid range: 137 MHz - 175 MHz, 410 MHz - 525 MHz, 862 MHz - 1020 MHz.");
         return;
     }
-    else if (freq < 137.0 || freq > 1020.0)
+    else if (freq < 137.0 || freq > 1020.0 || (freq > 175.0 && freq < 410.0) || (freq > 525.0 && freq < 862.0))
     {
         // ERROR: Invalid frequency has been given.
-        Serial.println("Frequency is invalid! Valid range: 137.0 MHz to 1020.0 MHz.");
+        Serial.println("Frequency is invalid! Valid range: 137 MHz - 175 MHz, 410 MHz - 525 MHz, 862 MHz - 1020 MHz.");
         return;
     }
     else
@@ -206,7 +206,7 @@ void CommandGet(RH_RF95 &rf95, String &arg)
             if (rf95.recv(buf, &len))
             {
                 Serial.print("RX> ");
-                Serial.println((char*)buf);
+                Serial.println((char *)buf);
                 Serial.print("RSSI = ");
                 Serial.println(rf95.lastRssi(), DEC);
             }
@@ -219,9 +219,7 @@ void CommandGet(RH_RF95 &rf95, String &arg)
         {
             Serial.println("Timeout has been reached. No message recieved.");
         }
-        
     }
-    
 }
 
 void CommandBW(RH_RF95 &rf95, String &arg)
